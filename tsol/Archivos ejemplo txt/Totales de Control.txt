@@ -1,0 +1,2 @@
+Descriptor Total{Valor
+TotalValorVenta{1234567,12

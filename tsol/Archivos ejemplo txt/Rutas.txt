@@ -1,0 +1,5 @@
+Código Vendedor {Código Cliente {Mes {Dia Semana {Frecuencia 
+01{0065{12{1{4
+01{0092{12{1{4
+01{0122{12{1{4
+01{0139{12{1{4

@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Output files
+output/
+output_files/
+logs/
+*.log
+
+# Data files (pueden contener información sensible)
+*.xlsx
+*.xlsm
+*.xls
+SI Inicio.xlsm
+mm.xlsx
+
+# Archivos de backup y temporales
+*.bak
+*.backup
+*_backup.py
+*_clean.py
+*_corrupted.py
+*_CORRUPTO*.bak
+*_ERROR.bak
+*_FIXED.py
+run_old.bat
+
+# Cache y temporales
+temp/
+tmp/
+*.tmp
+
+# IDE
+.vscode/
+.idea/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Archivos específicos del proyecto que son temporales
+distrijass_*.log
+diagnostico_*.py
+buscar_archivos_*.py
+leer_*.py
+verificar_*.py
+pruebatxt.py
+test_ftp_connection.py
+intercliente_cleaned_*.txt
