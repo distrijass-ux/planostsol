@@ -35,8 +35,8 @@ class VentaProcessor:
         )
         self.catalogo_principal = self.config['files']['catalogo_principal']
         
-        # Proveedores desde filtro_proveedores.criterios
-        self.proveedores = self.company_config.get('filtro_proveedores', {}).get('criterios', [])
+        # Cargar proveedores desde archivo proveedores.txt
+        self.proveedores = self._cargar_proveedores_desde_archivo()
         
         # mes y ano se determinarán dinámicamente desde los datos del Excel
         self.mes = None
@@ -65,6 +65,28 @@ class VentaProcessor:
             logger.info(f"Carpeta de salida creada: {self.output_folder}")
         else:
             logger.info(f"Carpeta de salida ya existe: {self.output_folder}")
+
+    def _cargar_proveedores_desde_archivo(self):
+        """Carga la lista de proveedores desde el archivo proveedores.txt."""
+        try:
+            providers_path = self.config['files'].get('providers', 'proveedores.txt')
+            if not os.path.isfile(providers_path):
+                logger.warning(f"Archivo de proveedores no encontrado: {providers_path}. Usando configuración por defecto.")
+                return self.company_config.get('filtro_proveedores', {}).get('criterios', [])
+            
+            proveedores = []
+            with open(providers_path, 'r', encoding='utf-8') as file:
+                for line in file:
+                    proveedor = line.strip()
+                    if proveedor:  # Ignorar líneas vacías
+                        proveedores.append(proveedor)
+            
+            logger.info(f"Cargados {len(proveedores)} proveedores desde {providers_path}")
+            return proveedores
+        except Exception as e:
+            logger.error(f"Error al cargar proveedores desde archivo: {e}")
+            # Fallback a configuración por defecto
+            return self.company_config.get('filtro_proveedores', {}).get('criterios', [])
 
     @staticmethod
     def verificar_archivo(archivo):
@@ -554,6 +576,7 @@ class VentaProcessor:
             col_nombre = prod_config.get('columnas', {}).get('nombre', 'Nombre')
             col_barras = prod_config.get('columnas', {}).get('codigo_barras', 'Codigo de barras')
             col_proveedor = prod_config.get('columnas', {}).get('proveedor', 'Proveedor')
+            col_proveedor2 = prod_config.get('columnas', {}).get('proveedor2', 'PROVEE 2')  # Nueva columna PROVEE 2
             col_categoria = prod_config.get('columnas', {}).get('categoria', 'Categoría')
             col_tipo_producto = prod_config.get('columnas', {}).get('tipo_producto', 'Tipo Prod')
             col_contenido = prod_config.get('columnas', {}).get('contenido', 'Contenido')
@@ -569,6 +592,10 @@ class VentaProcessor:
 
             # Seleccionar columnas disponibles, manejando las que podrían no existir
             columnas_a_usar = [col_codigo, col_nombre, col_barras, col_proveedor]
+            
+            # Verificar si existe PROVEE 2
+            if col_proveedor2 in productos_df.columns:
+                columnas_a_usar.append(col_proveedor2)
             
             # Agregar columnas adicionales si existen
             if col_categoria in productos_df.columns:
@@ -587,6 +614,10 @@ class VentaProcessor:
                 col_barras: 'Código De Barras',
                 col_proveedor: 'Proveedor'
             }
+            
+            # Incluir PROVEE 2 si existe
+            if col_proveedor2 in productos_df.columns:
+                rename_dict[col_proveedor2] = 'PROVEE 2'
             
             # Mapear las columnas de PROVEE-TSOL a los campos requeridos
             if col_categoria in productos_df.columns:
@@ -638,6 +669,20 @@ class VentaProcessor:
                 
             # Campos adicionales
             productos_final['Factor Peso'] = 1  # Valor por defecto
+            
+            # Lógica condicional para el campo Proveedor
+            # Si el Proveedor es 'TM - LO NUESTRO' usar PROVEE 2, de lo contrario usar Proveedor
+            if 'PROVEE 2' in productos_final.columns:
+                # Crear nueva columna Proveedor con lógica condicional
+                productos_final['Proveedor_Final'] = productos_final.apply(
+                    lambda row: row['PROVEE 2'] if row['Proveedor'] == 'TM - LO NUESTRO' else row['Proveedor'], 
+                    axis=1
+                )
+                # Reemplazar la columna Proveedor original
+                productos_final['Proveedor'] = productos_final['Proveedor_Final']
+                # Eliminar columnas temporales
+                productos_final = productos_final.drop(['PROVEE 2', 'Proveedor_Final'], axis=1)
+                logger.info("Aplicada lógica condicional para PROVEE 2 cuando Proveedor = 'TM - LO NUESTRO'")
             
             # Campos de sede (usar función auxiliar para obtener nombres de sede)
             productos_final['Código Sede'] = '01'  # Sede principal por defecto
