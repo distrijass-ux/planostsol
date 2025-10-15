@@ -1,2 +1,0 @@
-Descriptor Total{Valor
-TotalValorVenta{2002274179.45

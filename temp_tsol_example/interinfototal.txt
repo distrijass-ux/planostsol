@@ -1,2 +1,0 @@
-Nombre{Valor
-TotalValorVenta{7049932305

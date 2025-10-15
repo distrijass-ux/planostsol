@@ -32,6 +32,13 @@ output_files/
 logs/
 *.log
 
+# Archivos temporales y de ejemplo
+temp_review/
+temp_tsol_example/
+temp/
+tmp/
+*.tmp
+
 # Data files (pueden contener información sensible)
 *.xlsx
 *.xlsm
@@ -49,15 +56,6 @@ mm.xlsx
 *_ERROR.bak
 *_FIXED.py
 run_old.bat
-
-# Cache y temporales
-temp/
-tmp/
-*.tmp
-
-# IDE
-.vscode/
-.idea/
 
 # Windows
 Thumbs.db
