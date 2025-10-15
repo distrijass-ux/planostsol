@@ -126,7 +126,7 @@ class VentaProcessor:
             columnas_requeridas = [
                 'Cod. cliente', 'Cod. vendedor', 'Cod. productto',
                 'Fecha', 'Fac. numero', 'Cantidad', 'Vta neta',
-                'Tipo', 'Costo', 'Unidad', 'Pedido'
+                'Tipo', 'Costo', 'Unidad', 'Pedido', 'Codigo bodega'
             ]
 
             # Validar columnas requeridas
@@ -147,7 +147,8 @@ class VentaProcessor:
                 'Tipo': 'Tipo',
                 'Costo': 'Costo',
                 'Unidad': 'Unidad de Medida',
-                'Pedido': 'Numero Único de Pedido'
+                'Pedido': 'Numero Único de Pedido',
+                'Codigo bodega': 'Codigo bodega'
             })
 
             # Convertir tipos y ajustar formato
@@ -217,7 +218,7 @@ class VentaProcessor:
             txt_columns = [
                 'Código Cliente', 'Código Vendedor', 'Código Producto (Sku)',
                 'Fecha', 'Numero Documento', 'Cantidad',
-                'Valor Total Item Vendido', 'Tipo', 'Costo', 'Unidad de Medida'
+                'Valor Total Item Vendido', 'Tipo', 'Costo', 'Unidad de Medida', 'Codigo bodega'
             ]
             encabezado = '{'.join(txt_columns)
             with open(output_path_txt, 'w', encoding='utf-8') as file:
@@ -567,7 +568,7 @@ class VentaProcessor:
                 logger.info(f"Productos filtrados por proveedores: {len(productos_df)} registros")
 
             # Seleccionar columnas disponibles, manejando las que podrían no existir
-            columnas_a_usar = [col_codigo, col_nombre, col_barras]
+            columnas_a_usar = [col_codigo, col_nombre, col_barras, col_proveedor]
             
             # Agregar columnas adicionales si existen
             if col_categoria in productos_df.columns:
@@ -583,7 +584,8 @@ class VentaProcessor:
             rename_dict = {
                 col_codigo: 'Código',
                 col_nombre: 'Nombre',
-                col_barras: 'Código De Barras'
+                col_barras: 'Código De Barras',
+                col_proveedor: 'Proveedor'
             }
             
             # Mapear las columnas de PROVEE-TSOL a los campos requeridos
@@ -641,11 +643,11 @@ class VentaProcessor:
             productos_final['Código Sede'] = '01'  # Sede principal por defecto
             productos_final['Nombre Sede'] = 'PALMIRA/CALI'  # Sede principal por defecto
 
-            # Seleccionar y ordenar las 12 columnas requeridas según especificaciones
+            # Seleccionar y ordenar las columnas requeridas según especificaciones con Proveedor
             columnas_finales = [
                 'Código', 'Nombre', 'Tipo Referencia', 'Tipo De Unidad', 'Código De Barras',
                 'Código Categoría', 'Nombre Categoría', 'Código SubCategoría', 'Nombre SubCategoría',
-                'Factor Conversion Unidad', 'Factor Peso', 'Código Sede', 'Nombre Sede'
+                'Factor Conversion Unidad', 'Factor Peso', 'Código Sede', 'Nombre Sede', 'Proveedor'
             ]
             productos_final = productos_final[columnas_finales]
 
